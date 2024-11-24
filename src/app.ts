@@ -9,7 +9,18 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/', ProductRoutes);
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "Welcome to Stationary Products Services",
+        success: true,
+      });
+    
+  });
+
+
+
 app.use('/api/products', ProductRoutes);
 app.use('/api/orders', OrderRoutes);
 

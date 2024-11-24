@@ -2,22 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 // import { ProductModel } from "../product.model";
 import { ProductService } from './product.service';
 
-const welcome = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    
-    res.json({
-      success: true,
-      message: 'Welcome to Stationary Product Service',
-    })
 
-  } catch (error) {
-    next(error);
-  }
-};
 const createProduct = async (
   req: Request,
   res: Response,
@@ -118,7 +103,6 @@ const deleteOneProduct = async (
 };
 
 export const ProductController = {
-  welcome,
   createProduct,
   getAllProduct,
   getOneProduct,
