@@ -1,17 +1,28 @@
+// import { Server } from 'http';
 import app from './app';
-import config from './app/config';
 
 import mongoose from 'mongoose';
 
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.join(process.cwd(), '.env') });
+// let server : Server;
+
+
 async function main() {
-  try {
-    await mongoose.connect(config.database_url as string);
-    app.listen(config.port, () => {
-      console.log(`Example app listening on port ${config.port}`);
-    });
-  } catch (error) {
-    console.log(error);
-  }
+    try{
+        await mongoose.connect(process.env.DATABASE_URL as string);
+        app.listen(process.env.PORT, () => {
+            console.log(`Example app listening on port ${process.env.PORT}`)
+        })
+    }catch(error){
+        console.log(error)
+    }
+    
 }
 
 main();
+
+
+// console.log(process.cwd())
