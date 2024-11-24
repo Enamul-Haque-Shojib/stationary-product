@@ -2,6 +2,22 @@ import { NextFunction, Request, Response } from 'express';
 // import { ProductModel } from "../product.model";
 import { ProductService } from './product.service';
 
+const welcome = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    
+    res.json({
+      success: true,
+      message: 'Welcome to Stationary Product Service',
+    })
+
+  } catch (error) {
+    next(error);
+  }
+};
 const createProduct = async (
   req: Request,
   res: Response,
@@ -29,7 +45,7 @@ const getAllProduct = async (
     const products = await ProductService.getAllProductFromDB();
 
     res.status(200).json({
-      message: 'Products retrieved successfully',
+      message: 'All Products retrieved successfully',
       success: true,
       data: products,
     });
@@ -41,7 +57,7 @@ const getAllProduct = async (
 const getOneProduct = async (
   req: Request,
   res: Response,
-  next : NextFunction,
+  next: NextFunction,
 ) => {
   try {
     const { productId } = req.params;
@@ -49,7 +65,7 @@ const getOneProduct = async (
     const product = await ProductService.getOneProductFromDB(productId);
 
     res.status(200).json({
-      message: 'Product retrieved successfully',
+      message: 'One Product retrieved successfully',
       success: true,
       data: product,
     });
@@ -102,6 +118,7 @@ const deleteOneProduct = async (
 };
 
 export const ProductController = {
+  welcome,
   createProduct,
   getAllProduct,
   getOneProduct,
