@@ -1,26 +1,34 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { OrderService } from './order.service';
+import { orderValidationSchema } from './order.validation';
 
-const createOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+const createOrder = async (req: Request, res: Response) => {
   try {
     const { order: orderData } = req.body;
+    
 
-    const order = await OrderService.createOrderIntoDB(orderData);
+    const zodParsedData = orderValidationSchema.parse(orderData);
+    const order = await OrderService.createOrderIntoDB(zodParsedData);
+
 
     res.status(201).json({
       message: 'Order created successfully',
       success: true,
       data: order,
     });
-  } catch (error) {
-    next(error);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Validation Failed',
+      error: err,
+    });
   }
 };
 
 const calculateRevenue = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const revenue = await OrderService.calculateTotalRevenue();
@@ -32,8 +40,12 @@ const calculateRevenue = async (
         totalRevenue: revenue,
       },
     });
-  } catch (error) {
-    next(error);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
   }
 };
 

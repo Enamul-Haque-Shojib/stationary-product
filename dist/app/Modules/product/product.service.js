@@ -10,8 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
-const product_model_1 = require("../product.model");
+const product_model_1 = require("./product.model");
 const createProductIntoDB = (product) => __awaiter(void 0, void 0, void 0, function* () {
+    if (yield product_model_1.ProductModel.isProductExist(product.name)) {
+        throw Error('Product already exists!');
+    }
     const result = yield product_model_1.ProductModel.create(product);
     return result;
 });
@@ -24,6 +27,12 @@ const getOneProductFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
     return result;
 });
 const updateOneProductFromDB = (id, updateData) => __awaiter(void 0, void 0, void 0, function* () {
+    if (updateData.price && updateData.price < 0) {
+        throw new Error('Positive number price required');
+    }
+    if (updateData.quantity && updateData.quantity < 0) {
+        throw new Error('Positive number quantitys required');
+    }
     const result = yield product_model_1.ProductModel.findByIdAndUpdate(id, updateData, {
         new: true,
     });

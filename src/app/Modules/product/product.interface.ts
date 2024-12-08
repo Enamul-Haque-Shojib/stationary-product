@@ -1,4 +1,6 @@
-export type Product = {
+import { Model } from "mongoose";
+
+export type TProduct = {
   name: string;
   brand: string;
   price: number;
@@ -11,4 +13,10 @@ export type Product = {
   description: string;
   quantity: number;
   inStock: boolean;
+
 };
+
+
+export interface ProductStaticModel extends Model<TProduct> {
+  isProductExist(name: string): Promise<TProduct | null>;
+}

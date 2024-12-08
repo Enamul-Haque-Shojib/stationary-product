@@ -11,21 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
 const order_service_1 = require("./order.service");
-const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const order_validation_1 = require("./order.validation");
+const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { order: orderData } = req.body;
-        const order = yield order_service_1.OrderService.createOrderIntoDB(orderData);
+        const zodParsedData = order_validation_1.orderValidationSchema.parse(orderData);
+        const order = yield order_service_1.OrderService.createOrderIntoDB(zodParsedData);
         res.status(201).json({
             message: 'Order created successfully',
             success: true,
             data: order,
         });
     }
-    catch (error) {
-        next(error);
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'Validation Failed',
+            error: err,
+        });
     }
 });
-const calculateRevenue = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const calculateRevenue = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const revenue = yield order_service_1.OrderService.calculateTotalRevenue();
         res.status(200).json({
@@ -36,8 +42,12 @@ const calculateRevenue = (req, res, next) => __awaiter(void 0, void 0, void 0, f
             },
         });
     }
-    catch (error) {
-        next(error);
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'something went wrong',
+            error: err,
+        });
     }
 });
 exports.OrderController = {

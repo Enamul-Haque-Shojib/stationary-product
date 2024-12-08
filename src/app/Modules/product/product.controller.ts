@@ -1,30 +1,39 @@
-import { NextFunction, Request, Response } from 'express';
-// import { ProductModel } from "../product.model";
+import { Request, Response } from 'express';
 import { ProductService } from './product.service';
+import { productValidationSchema } from './product.validation';
+
 
 
 const createProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
+  
   try {
     const { product: productData } = req.body;
-    const product = await ProductService.createProductIntoDB(productData);
+    
+    const zodParsedData = productValidationSchema.parse(productData);
+
+    const product = await ProductService.createProductIntoDB(zodParsedData);
+
     res.status(201).json({
       message: 'Product created successfully',
       success: true,
       data: product,
     });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.status(500).json({
+      
+      message:'Validation Failed',
+      success: false,
+      error: error,
+    });
   }
 };
 
 const getAllProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const products = await ProductService.getAllProductFromDB();
@@ -34,15 +43,18 @@ const getAllProduct = async (
       success: true,
       data: products,
     });
-  } catch (error) {
-    next(error);
+  }catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'something went wrong',
+      error: error,
+    });
   }
 };
 
 const getOneProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const { productId } = req.params;
@@ -54,19 +66,24 @@ const getOneProduct = async (
       success: true,
       data: product,
     });
-  } catch (error) {
-    next(error);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
   }
 };
 
 const updateOneProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const { productId } = req.params;
-    const { updateData } = req.body;
+    const updateData = req.body;
+
+    
 
     const product = await ProductService.updateOneProductFromDB(
       productId,
@@ -78,27 +95,34 @@ const updateOneProduct = async (
       success: true,
       data: product,
     });
-  } catch (error) {
-    next(error);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
   }
 };
 const deleteOneProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   try {
     const { productId } = req.params;
 
-    const product = await ProductService.deleteOneProductFromDB(productId);
+    await ProductService.deleteOneProductFromDB(productId);
 
     res.status(200).json({
       message: 'Product deleted successfully',
       success: true,
-      data: product,
+      data: {},
     });
-  } catch (error) {
-    next(error);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      error: err,
+    });
   }
 };
 
