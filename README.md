@@ -5,7 +5,7 @@
 ### Stationery Shop
 
 ## Website Live link:
- <https://stationery-shop-teal.vercel.app/>
+ <https://stationary-shop-seven.vercel.app/>
 
 
  ## Features:
